@@ -128,11 +128,11 @@ if(MSVC)
 endif()
 
 target_compile_definitions(discord-connector PRIVATE ONLY_C_LOCALE) # make the date library use the C locale only
+target_compile_definitions(discord-connector PRIVATE BOOST_ERROR_CODE_HEADER_ONLY)
 if(USING_BOOST_NO_CONAN)
-	target_include_directories(discord-connector PUBLIC ${Boost_INCLUDE_DIR})
-	target_link_libraries(discord-connector ${Boost_LIBRARIES})
+	target_include_directories(discord-connector PUBLIC ${Boost_INCLUDE_DIRS})
 else()
-	target_link_libraries(discord-connector CONAN_PKG::boost)
+	target_include_directories(discord-connector PUBLIC ${Boost_INCLUDE_DIRS})
 endif()
 
 if(USING_OPENSSL_NO_CONAN)

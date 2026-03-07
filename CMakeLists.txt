@@ -97,7 +97,8 @@ if(USING_BOOST_NO_CONAN)
 	endif()
 	mark_as_advanced(BOOST_ROOT Boost_DIR)
 
-	set(Boost_INCLUDE_DIR "${Boost_INCLUDE_DIR}" PARENT_SCOPE)
+	set(Boost_INCLUDE_DIRS "${Boost_INCLUDE_DIRS}" CACHE INTERNAL "Boost include directories")
+	set(Boost_INCLUDE_DIR "${Boost_INCLUDE_DIR}" CACHE INTERNAL "Boost include directory")
 else()
 	conan_check(REQUIRED)
 	conan_cmake_run(
@@ -105,10 +106,12 @@ else()
 		ARCH x86
 		BASIC_SETUP CMAKE_TARGETS
 		BUILD missing
-		OPTIONS boost:zlib=False
+		OPTIONS boost:header_only=True boost:zlib=False
 		SETTINGS ${CONAN_SETTINGS_WINDOWS}
 	)
 	set_target_properties(CONAN_PKG::boost PROPERTIES IMPORTED_GLOBAL TRUE)
+	get_target_property(DCC_BOOST_INCLUDE_DIRS CONAN_PKG::boost INTERFACE_INCLUDE_DIRECTORIES)
+	set(Boost_INCLUDE_DIRS "${DCC_BOOST_INCLUDE_DIRS}" CACHE INTERNAL "Boost include directories")
 endif()
 
 set(CONAN_HAS_FMT TRUE CACHE INTERNAL FALSE)
