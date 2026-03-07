@@ -234,6 +234,8 @@ native DCC_DeleteCommand(DCC_Command:command);
 native DCC_Option:DCC_AddCommandOption(const name[], const description[], DCC_CommandOptionType:type, bool:required = true, DCC_Option:parent_option = 0);
 
 // interactions
+native DCC_GetInteractionOptionCount(DCC_Interaction:interaction, &option_count);
+native DCC_GetInteractionOption(DCC_Interaction:interaction, offset, path[], value[], &DCC_CommandOptionType:type, path_size = sizeof path, value_size = sizeof value);
 native DCC_GetInteractionMentionCount(DCC_Interaction:interaction, &mentioned_user_count);
 native DCC_GetInteractionMention(DCC_Interaction:interaction, offset, &DCC_User:mentioned_user);
 native DCC_GetInteractionContent(DCC_Interaction:interaction, dest[], max_size = sizeof dest);

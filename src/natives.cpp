@@ -2970,6 +2970,80 @@ AMX_DECLARE_NATIVE(Native::DCC_CreateCommand)
 	return id;
 }
 
+// native DCC_GetInteractionOptionCount(DCC_Interaction:interaction, &option_count);
+AMX_DECLARE_NATIVE(Native::DCC_GetInteractionOptionCount)
+{
+	ScopedDebugInfo dbg_info(amx, "DCC_GetInteractionOptionCount", params, "dr");
+
+	CommandInteractionId_t id = params[1];
+	CommandInteraction_t const& interaction = CommandInteractionManager::Get()->FindCommandInteraction(id);
+	if (!interaction)
+	{
+		Logger::Get()->LogNative(samplog_LogLevel::ERROR, "invalid interaction id '{}'", id);
+		return 0;
+	}
+
+	cell* dest = nullptr;
+	if (amx_GetAddr(amx, params[2], &dest) != AMX_ERR_NONE || dest == nullptr)
+	{
+		Logger::Get()->LogNative(samplog_LogLevel::ERROR, "invalid reference");
+		return 0;
+	}
+
+	*dest = static_cast<cell>(interaction->GetOptions().size());
+
+	Logger::Get()->LogNative(samplog_LogLevel::DEBUG, "return value: '1'");
+	return 1;
+}
+
+// native DCC_GetInteractionOption(DCC_Interaction:interaction, offset, path[], value[], &DCC_CommandOptionType:type, path_size = sizeof path, value_size = sizeof value);
+AMX_DECLARE_NATIVE(Native::DCC_GetInteractionOption)
+{
+	ScopedDebugInfo dbg_info(amx, "DCC_GetInteractionOption", params, "ddssrdd");
+
+	CommandInteractionId_t id = params[1];
+	CommandInteraction_t const& interaction = CommandInteractionManager::Get()->FindCommandInteraction(id);
+	if (!interaction)
+	{
+		Logger::Get()->LogNative(samplog_LogLevel::ERROR, "invalid interaction id '{}'", id);
+		return 0;
+	}
+
+	auto const offset = static_cast<unsigned int>(params[2]);
+	auto const* option = interaction->GetOption(offset);
+	if (option == nullptr)
+	{
+		Logger::Get()->LogNative(samplog_LogLevel::ERROR,
+			"invalid offset '{}', max size is '{}'",
+			offset, interaction->GetOptions().size());
+		return 0;
+	}
+
+	cell* type_dest = nullptr;
+	if (amx_GetAddr(amx, params[5], &type_dest) != AMX_ERR_NONE || type_dest == nullptr)
+	{
+		Logger::Get()->LogNative(samplog_LogLevel::ERROR, "invalid reference");
+		return 0;
+	}
+
+	if (amx_SetCppString(amx, params[3], option->m_FullName, params[6]) != AMX_ERR_NONE)
+	{
+		Logger::Get()->LogNative(samplog_LogLevel::ERROR, "invalid path output buffer");
+		return 0;
+	}
+
+	if (amx_SetCppString(amx, params[4], option->m_Value, params[7]) != AMX_ERR_NONE)
+	{
+		Logger::Get()->LogNative(samplog_LogLevel::ERROR, "invalid value output buffer");
+		return 0;
+	}
+
+	*type_dest = static_cast<cell>(option->m_Type);
+
+	Logger::Get()->LogNative(samplog_LogLevel::DEBUG, "return value: '1'");
+	return 1;
+}
+
 // native DCC_GetInteractionMentionCount(DCC_Interaction:interaction, &mentioned_user_count);
 AMX_DECLARE_NATIVE(Native::DCC_GetInteractionMentionCount)
 {
@@ -3046,7 +3120,7 @@ AMX_DECLARE_NATIVE(Native::DCC_GetInteractionContent)
 	}
 
 	cell ret_val = amx_SetCppString(
-		amx, params[2], interaction->GetOptions().at(0)->m_Value, params[3]) == AMX_ERR_NONE;
+		amx, params[2], interaction->GetContent(), params[3]) == AMX_ERR_NONE;
 
 	Logger::Get()->LogNative(samplog_LogLevel::DEBUG, "return value: '{}'", ret_val);
 	return ret_val;

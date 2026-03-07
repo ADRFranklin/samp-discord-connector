@@ -303,6 +303,8 @@ extern "C" const AMX_NATIVE_INFO native_list[] =
 
 	AMX_DEFINE_NATIVE(DCC_CreateCommand)
 	AMX_DEFINE_NATIVE(DCC_AddCommandOption)
+	AMX_DEFINE_NATIVE(DCC_GetInteractionOptionCount)
+	AMX_DEFINE_NATIVE(DCC_GetInteractionOption)
 	AMX_DEFINE_NATIVE(DCC_GetInteractionMentionCount)
 	AMX_DEFINE_NATIVE(DCC_GetInteractionMention)
 	AMX_DEFINE_NATIVE(DCC_GetInteractionContent)
