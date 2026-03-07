@@ -106,6 +106,7 @@ set_target_properties(discord-connector
 endif()
 
 target_include_directories(discord-connector PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}
 	${OPENSSL_INCLUDE_DIR}
 	${SAMPSDK_INCLUDE_DIR}
 	${DCC_CONFIG_INCLUDE_DIR}
@@ -141,7 +142,7 @@ else()
 	target_link_libraries(discord-connector CONAN_PKG::openssl)
 endif()
 
-target_link_libraries(discord-connector ${SAMPSDK_TARGET} log-core CONAN_PKG::fmt OMP-SDK)
+target_link_libraries(discord-connector ${SAMPSDK_TARGET} log-core CONAN_PKG::fmt)
 
 if(UNIX)
 	if(NOT APPLE)

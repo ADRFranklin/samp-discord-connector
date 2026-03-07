@@ -133,7 +133,6 @@ else()
 endif()
 
 add_subdirectory(libs/log-core)
-add_subdirectory(libs/omp-sdk)
 add_subdirectory(src)
 
 if(DCC_CONAN_MSVC_VERSION_OVERRIDDEN)
